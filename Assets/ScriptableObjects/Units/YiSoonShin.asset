@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: f7ab1bb00c2c8451d9ed97ff6601c770, type: 3}
   m_Name: YiSoonShin
-  m_EditorClassIdentifier: Assembly-CSharp::UnitSo
+  m_EditorClassIdentifier: 
   Name: "\uC774\uC21C\uC2E0"
   Prefab: {fileID: 0}
   Portrait: {fileID: 21300000, guid: 51c2cade382de4d8080716397e009f42, type: 3}
