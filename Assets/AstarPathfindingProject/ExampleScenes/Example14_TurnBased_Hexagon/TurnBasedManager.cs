@@ -1,33 +1,41 @@
 using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using Pathfinding;
 using UnityEngine.EventSystems;
+using Utils;
+
+
 
 namespace Pathfinding.Examples {
-    /// <summary>Helper script in the example scene 'Turn Based'</summary>
-    [HelpURL("http://arongranberg.com/astar/documentation/stable/class_pathfinding_1_1_examples_1_1_turn_based_manager.php")]
-    public class TurnBasedManager : MonoBehaviour {
-
-        public enum State {
-            SelectUnit,
-            SelectTarget,
-            Move
-        }
+	/// <summary>Helper script in the example scene 'Turn Based'</summary>
+	[HelpURL("http://arongranberg.com/astar/documentation/stable/class_pathfinding_1_1_examples_1_1_turn_based_manager.php")]
+	public class TurnBasedManager : Singleton<TurnBasedManager> {
+		TurnBasedAI selected;
 
         public float movementSpeed;
-        public GameObject nodePrefab;
-        public LayerMask layerMask;
+		public GameObject nodePrefab;
+		public LayerMask layerMask;
 
-        public State state = State.SelectUnit;
+		List<GameObject> possibleMoves = new List<GameObject>();
+		EventSystem eventSystem;
 
-        private readonly List<GameObject> possibleMoves = new();
-        private EventSystem eventSystem;
-        private TurnBasedAI selected;
+		public State state = State.SelectUnit;
 
-        private void Awake()
+		public enum State 
         {
-            //eventSystem = FindObjectOfType<EventSystem>();
+			SelectUnit,
+			SelectTarget,
+			Move
+		}
+
+        private Unit _currentUnit;
+
+		protected override void Awake()
+        {
+            base.Awake();
+            eventSystem = FindObjectOfType<EventSystem>();
         }
 
         private void Update()
@@ -46,7 +54,7 @@ namespace Pathfinding.Examples {
                 if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
                     var unitUnderMouse = GetByRay<TurnBasedAI>(ray);
-
+                    
                     if (unitUnderMouse != null)
                     {
                         Select(unitUnderMouse);
@@ -61,7 +69,8 @@ namespace Pathfinding.Examples {
         private void HandleButtonUnderRay(Ray2D ray)
         {
             var button = GetByRay<Astar3DButton>(ray);
-
+            _currentUnit = GetByRay<Unit>(ray);
+            
             if (button != null && Input.GetKeyDown(KeyCode.Mouse0))
             {
                 button.OnClick();
@@ -69,6 +78,7 @@ namespace Pathfinding.Examples {
                 DestroyPossibleMoves();
                 state = State.Move;
                 StartCoroutine(MoveToNode(selected, button.node));
+                
             }
         }
 
@@ -100,7 +110,7 @@ namespace Pathfinding.Examples {
 
             // Wait for the path calculation to complete
             yield return StartCoroutine(path.WaitForPath());
-
+            
             if (path.error)
             {
                 // Not obvious what to do here, but show the possible moves again
@@ -116,13 +126,15 @@ namespace Pathfinding.Examples {
             // Set the target node so other scripts know which
             // node is the end point in the path
             unit.targetNode = path.path[path.path.Count - 1];
-
+            if (_currentUnit != null) _currentUnit.UnitState = UnitState.Action;
             yield return StartCoroutine(MoveAlongPath(unit, path, movementSpeed));
 
             unit.blocker.BlockAtCurrentPosition();
+            
 
             // Select a new unit to move
             state = State.SelectUnit;
+            if (_currentUnit != null) _currentUnit.UnitState = UnitState.Done;
         }
 
         /// <summary>Interpolates the unit along the path</summary>
@@ -191,4 +203,5 @@ namespace Pathfinding.Examples {
                 }
         }
     }
+
 }

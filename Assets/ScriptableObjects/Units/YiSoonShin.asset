@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: YiSoonShin
   m_EditorClassIdentifier: 
   Name: "\uC774\uC21C\uC2E0"
-  Prefab: {fileID: 0}
+  Prefab: {fileID: 5721109988696378229, guid: 73110b5d47ea14285895b34e50003fc0, type: 3}
   Portrait: {fileID: 21300000, guid: 51c2cade382de4d8080716397e009f42, type: 3}
-  Level: 0
-  HP: 0
-  MP: 0
+  Level: 1
+  HP: 100
+  MP: 15
