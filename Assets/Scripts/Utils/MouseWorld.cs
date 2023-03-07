@@ -13,7 +13,7 @@ namespace Utils
 
         public class UnitInfoEventArgs 
         {
-            public UnitState State;
+            public Unit Unit;
             public UnitInfo UnitInfo;
         }
         
@@ -24,9 +24,9 @@ namespace Utils
         }
         private void Update()
         {
-            if (MouseOverUnit(out UnitInfo unit, out UnitState state))
+            if (MouseOverUnit(out UnitInfo unitInfo, out Unit unit))
             {
-                OnMouseOverUnit?.Invoke(this, new UnitInfoEventArgs{State = state, UnitInfo = unit});
+                OnMouseOverUnit?.Invoke(this, new UnitInfoEventArgs{Unit = unit, UnitInfo = unitInfo});
             }
             else
             {
@@ -34,21 +34,17 @@ namespace Utils
             }
             
         }
-        private bool MouseOverUnit(out UnitInfo unit, out UnitState state)
+        private bool MouseOverUnit(out UnitInfo unitInfo, out Unit unit)
         {
             var mousePosition = _camera.ScreenToWorldPoint(Input.mousePosition);
             var mousePos2D = new Vector2(mousePosition.x, mousePosition.y);
             var ray = new Ray2D(mousePos2D, transform.TransformDirection(Vector2.positiveInfinity));
             
-            unit = GetByRay<UnitInfo>(ray);
+            unitInfo = GetByRay<UnitInfo>(ray);
             
-            var unitState = GetByRay<Unit>(ray);
-            if (unitState != null)
-                state = unitState.UnitState;
-            else
-                state = UnitState.Active;
-
-            return unit != null && unitState != null;
+            unit = GetByRay<Unit>(ray);
+            
+            return unitInfo != null && unit != null;
 
         }
         

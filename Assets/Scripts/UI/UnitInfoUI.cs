@@ -14,7 +14,8 @@ public class UnitInfoUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI mpText;
     [SerializeField] private TextMeshProUGUI levelText;
 
-    private UnitInfo _unit;
+    private UnitInfo _unitInfo;
+    private Unit _unit;
     
     // Start is called before the first frame update
     private void Start()
@@ -29,15 +30,15 @@ public class UnitInfoUI : MonoBehaviour
     }
     private void OnMouseOverUnit(object sender, MouseWorld.UnitInfoEventArgs unitInfoEventArgs)
     {
-        _unit = unitInfoEventArgs.UnitInfo;
-        var unitInfo = _unit.Info;
-
-        portrait.GetComponent<Image>().sprite = _unit.Info.Portrait;
-        nameText.text = $"이름: {unitInfo.Name}";
-        hpText.text = $"HP: {unitInfo.HP}";
-        mpText.text = $"MP: {unitInfo.MP}";
-        levelText.text = $"LV: {unitInfo.Level}";
-        if (unitInfoEventArgs.State != UnitState.Action)
+        _unitInfo = unitInfoEventArgs.UnitInfo;
+        _unit = unitInfoEventArgs.Unit;
+        
+        portrait.GetComponent<Image>().sprite = _unitInfo.Info.Portrait;
+        nameText.text = $"이름: {_unitInfo.Info.Name}";
+        hpText.text = $"HP: {_unitInfo.Info.HP}";
+        mpText.text = $"MP: {_unitInfo.Info.MP}";
+        levelText.text = $"LV: {_unitInfo.Info.Level}";
+        if (_unit != null && UnitStateManager.Instance.GetUnitState(_unit) != UnitState.Action)
             UpdateVisual(true);
         else
             UpdateVisual(false);

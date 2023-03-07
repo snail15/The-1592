@@ -54,7 +54,7 @@ namespace Pathfinding.Examples {
                 if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
                     var unitUnderMouse = GetByRay<TurnBasedAI>(ray);
-                    
+                    _currentUnit = GetByRay<Unit>(ray);
                     if (unitUnderMouse != null)
                     {
                         Select(unitUnderMouse);
@@ -69,8 +69,6 @@ namespace Pathfinding.Examples {
         private void HandleButtonUnderRay(Ray2D ray)
         {
             var button = GetByRay<Astar3DButton>(ray);
-            _currentUnit = GetByRay<Unit>(ray);
-            
             if (button != null && Input.GetKeyDown(KeyCode.Mouse0))
             {
                 button.OnClick();
@@ -126,7 +124,7 @@ namespace Pathfinding.Examples {
             // Set the target node so other scripts know which
             // node is the end point in the path
             unit.targetNode = path.path[path.path.Count - 1];
-            if (_currentUnit != null) _currentUnit.UnitState = UnitState.Action;
+            if (_currentUnit != null) UnitStateManager.Instance.SetUnitState(_currentUnit, UnitState.Action);
             yield return StartCoroutine(MoveAlongPath(unit, path, movementSpeed));
 
             unit.blocker.BlockAtCurrentPosition();
@@ -134,7 +132,8 @@ namespace Pathfinding.Examples {
 
             // Select a new unit to move
             state = State.SelectUnit;
-            if (_currentUnit != null) _currentUnit.UnitState = UnitState.Done;
+            if (_currentUnit != null) UnitStateManager.Instance.SetUnitState(_currentUnit, UnitState.Done);
+           
         }
 
         /// <summary>Interpolates the unit along the path</summary>

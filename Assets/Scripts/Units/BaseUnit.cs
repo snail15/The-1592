@@ -11,4 +11,9 @@ public abstract class BaseUnit : MonoBehaviour
    {
       UnitState = UnitState.Active;
    }
+
+   protected virtual void Start()
+   {
+      UnitStateManager.Instance.SetUnitState(this, UnitState.Active);
+   }
 }
